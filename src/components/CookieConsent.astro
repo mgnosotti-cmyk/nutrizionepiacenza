@@ -1,0 +1,116 @@
+<div id="cookie-banner" class="cookie-panel" hidden role="region" aria-label="Preferenze cookie">
+  <div class="cookie-copy">
+    <strong>La tua privacy, prima di tutto.</strong>
+    <p>Utilizziamo cookie statistici facoltativi per comprendere come viene visitato il sito e migliorare i contenuti. Puoi accettarli, rifiutarli o scegliere le tue preferenze.</p>
+    <a href="/privacy/">Leggi l'informativa privacy</a>
+  </div>
+  <div class="cookie-actions">
+    <button type="button" id="cookie-reject">Rifiuta</button>
+    <button type="button" id="cookie-customize">Personalizza</button>
+    <button type="button" id="cookie-accept" class="cookie-primary">Accetta</button>
+  </div>
+</div>
+
+<div id="cookie-preferences" class="cookie-overlay" hidden>
+  <section class="cookie-dialog" role="dialog" aria-modal="true" aria-labelledby="cookie-dialog-title">
+    <h2 id="cookie-dialog-title">Preferenze cookie</h2>
+    <p>I cookie tecnici necessari al funzionamento del sito sono sempre attivi. Puoi decidere se consentire quelli statistici di Google Analytics.</p>
+    <label class="cookie-option">
+      <input id="cookie-analytics" type="checkbox" />
+      <span>Consenti cookie statistici</span>
+    </label>
+    <div class="cookie-actions">
+      <button type="button" id="cookie-cancel">Annulla</button>
+      <button type="button" id="cookie-save" class="cookie-primary">Salva preferenze</button>
+    </div>
+  </section>
+</div>
+
+<style>
+  .cookie-panel[hidden],.cookie-overlay[hidden]{display:none!important}
+  .cookie-panel{position:fixed;bottom:20px;left:20px;right:20px;z-index:1000;max-width:1100px;margin:auto;background:#f7f5f0;border:1px solid #dcd7ce;box-shadow:0 12px 45px #29292325;padding:25px;display:flex;align-items:center;justify-content:space-between;gap:30px}
+  .cookie-copy{max-width:650px}
+  .cookie-copy strong{font-size:1rem;font-weight:600}
+  .cookie-copy p{font-size:.83rem;line-height:1.6;margin:9px 0}
+  .cookie-copy a{font-size:.78rem;text-decoration:underline}
+  .cookie-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .cookie-actions button{font-family:inherit;font-size:.76rem;cursor:pointer;border:1px solid #62684e;background:transparent;color:#292923;padding:12px 17px;border-radius:30px;min-height:44px}
+  .cookie-actions .cookie-primary{background:#62684e;color:white}
+  .cookie-actions button:focus-visible{outline:3px solid #62684e;outline-offset:3px}
+  .cookie-overlay{position:fixed;inset:0;z-index:1100;background:#29292399;display:flex;align-items:center;justify-content:center;padding:20px}
+  .cookie-dialog{background:#f7f5f0;color:#292923;width:min(100%,520px);padding:30px;max-height:90vh;overflow:auto}
+  .cookie-dialog h2{font-size:2.5rem;margin-bottom:20px}
+  .cookie-dialog p{font-size:.9rem}
+  .cookie-option{display:flex;align-items:center;gap:12px;margin:25px 0;font-size:.9rem}
+  .cookie-option input{width:20px;height:20px;accent-color:#62684e}
+  @media(max-width:680px){.cookie-panel{bottom:10px;left:10px;right:10px;display:block;padding:20px}.cookie-actions{margin-top:18px}.cookie-actions button{flex:1}.cookie-dialog{padding:24px}}
+</style>
+
+<script>
+  const key = 'mg_cookie_consent_v1';
+  const banner = document.getElementById('cookie-banner');
+  const overlay = document.getElementById('cookie-preferences');
+  const analytics = document.getElementById('cookie-analytics') as HTMLInputElement;
+  const customize = document.getElementById('cookie-customize') as HTMLButtonElement;
+  const cancel = document.getElementById('cookie-cancel') as HTMLButtonElement;
+  let previousFocus: HTMLElement | null = null;
+
+  function readChoice(): boolean | null {
+    try {
+      const value = localStorage.getItem(key);
+      if (value === 'accepted') return true;
+      if (value === 'rejected') return false;
+    } catch {}
+    return null;
+  }
+
+  function saveChoice(accepted: boolean) {
+    try { localStorage.setItem(key, accepted ? 'accepted' : 'rejected'); } catch {}
+    banner?.setAttribute('hidden', '');
+    overlay?.setAttribute('hidden', '');
+    document.dispatchEvent(new CustomEvent('mg-consent-change', {detail: {analytics: accepted}}));
+  }
+
+  if (readChoice() === null) banner?.removeAttribute('hidden');
+
+  document.getElementById('cookie-accept')?.addEventListener('click', () => saveChoice(true));
+  document.getElementById('cookie-reject')?.addEventListener('click', () => saveChoice(false));
+
+  function closePreferences() {
+    overlay?.setAttribute('hidden', '');
+    previousFocus?.focus();
+  }
+
+  function openPreferences() {
+    previousFocus = document.activeElement as HTMLElement;
+    analytics.checked = readChoice() === true;
+    overlay?.removeAttribute('hidden');
+    analytics.focus();
+  }
+
+  customize?.addEventListener('click', openPreferences);
+  cancel?.addEventListener('click', closePreferences);
+  document.getElementById('cookie-save')?.addEventListener('click', () => {
+    saveChoice(analytics.checked);
+    previousFocus?.focus();
+  });
+
+  overlay?.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closePreferences();
+    if (event.key === 'Tab') {
+      const controls = Array.from(overlay.querySelectorAll<HTMLElement>('input, button'));
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  document.addEventListener('mg-open-cookie-preferences', openPreferences);
+  document.getElementById('cookie-settings-link')?.addEventListener('click', openPreferences);
+</script>

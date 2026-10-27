@@ -1,0 +1,33 @@
+---
+import '@fontsource/dm-sans/400.css';
+import '@fontsource/dm-sans/500.css';
+import '@fontsource/dm-sans/600.css';
+import '@fontsource/italiana/400.css';
+import '../styles/global.css';
+import { nav } from '../data/navigation.js';
+import CookieConsent from '../components/CookieConsent.astro';
+import GoogleAnalytics from '../components/GoogleAnalytics.astro';
+const {title='Maria Giulia Nosotti | Salute orale integrata',description='Maria Giulia Nosotti: salute orale integrata, prevenzione, nutrizione e salute della donna.'} = Astro.props;
+const path=Astro.url.pathname;
+---
+<!doctype html>
+<html lang="it">
+<head>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="description" content={description}/><meta name="theme-color" content="#f7f5f0"/>
+<title>{title}</title>
+<link rel="canonical" href={new URL(Astro.url.pathname, "https://www.nutrizionepiacenza.it").href}/>
+
+</head>
+<body>
+<header class="site-header">
+ <a class="wordmark" href="/" aria-label="Maria Giulia Nosotti, homepage"><img src="/images/Logo%20mg.PNG" alt="" class="header-logo" width="48" height="48" /><strong>Dott.ssa MARIA GIULIA NOSOTTI</strong><small>SALUTE ORALE INTEGRATA</small></a>
+ <nav class="desktop-nav" aria-label="Navigazione principale">{nav.map(item=><a href={item.href} aria-current={path===item.href?'page':undefined}>{item.label}</a>)}<a class="pill pill-solid small" href="/contatti/">Contatti</a></nav>
+ <details class="mobile-menu"><summary aria-label="Apri menu">Menu <span aria-hidden="true">☰</span></summary><nav aria-label="Navigazione mobile">{nav.map(item=><a href={item.href}>{item.label}</a>)}<a href="/contatti/">Contatti</a></nav></details>
+</header>
+<main><slot /></main>
+<footer class="site-footer"><div><a class="wordmark" href="/"><strong>Dott.ssa MARIA GIULIA NOSOTTI</strong><small>IGIENISTA DENTALE · ALBO DI PIACENZA N. 15</small></a><p>Prevenzione, conoscenza e consapevolezza.</p></div><div><a href="/chi-sono/">Chi sono</a><a href="/approfondimenti/">Approfondimenti</a><a href="/contatti/">Contatti</a><a href="https://www.instagram.com/mariagiulianosotti/" target="_blank" rel="noopener noreferrer" aria-label="Instagram di Maria Giulia Nosotti">Instagram ↗</a></div><div class="legal">P. IVA 01680800339 · Albo Igienisti Dentali di Piacenza n. 15 · <a href="/privacy/">Privacy</a> · <button type="button" id="cookie-settings-link">Preferenze cookie</button> © 2024 Maria Giulia Nosotti.</div></footer>
+<CookieConsent />
+<GoogleAnalytics />
+</body></html>
