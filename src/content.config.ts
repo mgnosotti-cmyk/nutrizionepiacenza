@@ -16,4 +16,18 @@ const approfondimenti = defineCollection({
   }),
 });
 
-export const collections = { approfondimenti };
+const ricette = defineCollection({
+  loader: glob({
+    pattern: '**/*.md',
+    base: './src/content/ricette',
+  }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    category: z.string().optional(),
+    date: z.coerce.date().optional(),
+    image: z.string().optional(),
+  }),
+});
+
+export const collections = { approfondimenti, ricette };
