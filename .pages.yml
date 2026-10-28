@@ -30,3 +30,30 @@ content:
       - name: body
         label: Testo dell'articolo
         type: rich-text
+        
+  - name: ricette
+    label: Ricette
+    type: collection
+    path: src/content/ricette
+    view:
+      fields: [title, category, date]
+    fields:
+      - name: title
+        label: Titolo della ricetta
+        type: string
+        required: true
+      - name: description
+        label: Descrizione breve
+        type: text
+      - name: category
+        label: Categoria
+        type: string
+      - name: date
+        label: Data
+        type: date
+      - name: image
+        label: Fotografia
+        type: image
+      - name: body
+        label: Ingredienti e preparazione
+        type: rich-text
