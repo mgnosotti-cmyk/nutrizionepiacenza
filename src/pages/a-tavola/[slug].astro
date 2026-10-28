@@ -1,0 +1,48 @@
+
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const ricette = await getCollection('ricette');
+
+  return ricette.map((ricetta) => ({
+    params: { slug: ricetta.id },
+    props: { ricetta },
+  }));
+}
+
+const { ricetta } = Astro.props;
+const { Content } = await render(ricetta);
+---
+
+<Base
+  title={`${ricetta.data.title} | Maria Giulia Nosotti`}
+  description={ricetta.data.description ?? ''}
+>
+  <section class="page-hero">
+    <span class="eyebrow">A tavola · {ricetta.data.category ?? 'Ricette'}</span>
+    <h1>{ricetta.data.title}</h1>
+    {ricetta.data.description && (
+      <p>{ricetta.data.description}</p>
+    )}
+  </section>
+
+  <article class="content">
+    {ricetta.data.image && (
+      <img
+        src={ricetta.data.image}
+        alt={ricetta.data.title}
+        style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:60px;"
+      />
+    )}
+
+    <Content />
+
+    <p>
+      <a class="pill pill-outline" href="/a-tavola/">
+        Torna a tutte le ricette ↗
+      </a>
+    </p>
+  </article>
+</Base>
