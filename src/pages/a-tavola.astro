@@ -1,5 +1,13 @@
+
 ---
 import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const ricette = (await getCollection('ricette'))
+  .sort((a, b) =>
+    (b.data.date?.getTime() ?? 0) -
+    (a.data.date?.getTime() ?? 0)
+  );
 ---
 
 <Base
@@ -13,11 +21,44 @@ import Base from '../layouts/Base.astro';
   </section>
 
   <div class="content">
-<p>L'alimentazione è parte della nostra quotidianità: un insieme di sapori, abitudini, tradizioni e scelte che accompagnano ogni fase della vita.</p>
-<p>In questo spazio condivido ricette, idee e curiosità sugli alimenti, con uno sguardo alle loro caratteristiche nutrizionali e alle connessioni con la salute orale e il benessere generale.</p>
-<p>Perché conoscere ciò che portiamo in tavola può aiutarci a fare scelte più consapevoli, senza rinunciare al piacere del cibo.</p>
-<h2>Ricette da provare</h2><p>Nuove ricette in arrivo.</p>
-<h2>Dentro gli alimenti</h2><p>Prossimamente nuovi approfondimenti.</p>
-<h2>Alimentazione e salute orale</h2><p>Prossimamente nuovi approfondimenti.</p>
-</div>
+    <p>L'alimentazione è parte della nostra quotidianità: un insieme di sapori, abitudini, tradizioni e scelte che accompagnano ogni fase della vita.</p>
+    <p>In questo spazio condivido ricette, idee e curiosità sugli alimenti, con uno sguardo alle loro caratteristiche nutrizionali e alle connessioni con la salute orale.</p>
+    <p>Perché conoscere ciò che portiamo in tavola può aiutarci a fare scelte più consapevoli, senza rinunciare al piacere del cibo.</p>
+
+    <h2>Ricette da provare</h2>
+
+    {ricette.length === 0 && (
+      <p>Nuove ricette in arrivo.</p>
+    )}
+
+    {ricette.map((ricetta) => (
+      <a
+        href={`/a-tavola/${ricetta.id}/`}
+        style="display:block;max-width:680px;margin:30px 0 55px;"
+      >
+        {ricetta.data.image && (
+          <img
+            src={ricetta.data.image}
+            alt={ricetta.data.title}
+            style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:24px;"
+            loading="lazy"
+          />
+        )}
+        {ricetta.data.category && (
+          <span class="eyebrow">{ricetta.data.category}</span>
+        )}
+        <h3 style="margin:15px 0;">{ricetta.data.title}</h3>
+        {ricetta.data.description && (
+          <p>{ricetta.data.description}</p>
+        )}
+        <span class="link-arrow">Scopri la ricetta ↗</span>
+      </a>
+    ))}
+
+    <h2>Dentro gli alimenti</h2>
+    <p>Prossimamente nuovi approfondimenti.</p>
+
+    <h2>Alimentazione e salute orale</h2>
+    <p>Prossimamente nuovi approfondimenti.</p>
+  </div>
 </Base>
