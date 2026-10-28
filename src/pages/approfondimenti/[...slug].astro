@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const articoli = await getCollection('approfondimenti');
+
+  return articoli.map((articolo) => ({
+    params: { slug: articolo.id },
+    props: { articolo },
+  }));
+}
+
+const { articolo } = Astro.props;
+const { Content } = await render(articolo);
+---
+
+<Base
+  title={`${articolo.data.title} | Maria Giulia Nosotti`}
+  description={articolo.data.description || ''}
+>
+  <section class="page-hero">
+    <span class="eyebrow">
+      Approfondimenti · {articolo.data.category}
+    </span>
+
+    <h1>{articolo.data.title}</h1>
+
+    {articolo.data.description && (
+      <p>{articolo.data.description}</p>
+    )}
+
+    <p>
+      <small>Dott.ssa Maria Giulia Nosotti</small>
+    </p>
+  </section>
+
+  <article class="content">
+    {articolo.data.image && (
+      <img
+        src={articolo.data.image}
+        alt={articolo.data.title}
+        style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:60px;"
+      />
+    )}
+
+    <Content />
+
+    <p>
+      <a class="pill pill-outline" href="/approfondimenti/">
+        Torna agli approfondimenti ↗
+      </a>
+    </p>
+  </article>
+</Base>
