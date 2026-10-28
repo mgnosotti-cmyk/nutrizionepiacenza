@@ -1,5 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const articoli = (await getCollection('approfondimenti'))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 ---
 <Base title="Approfondimenti | Maria Giulia Nosotti" description="Uno spazio dedicato alla divulgazione e alla lettura critica delle evidenze scientifiche."><section class="page-hero"><span class="eyebrow">Approfondimenti</span><h1>Conoscenza, per scelte più consapevoli.</h1><p>Uno spazio dedicato alla divulgazione e alla lettura critica delle evidenze scientifiche.</p></section><div class="content">
 <h2>La scienza, per comprendere meglio la nostra salute.</h2>
@@ -17,4 +21,23 @@ import Base from '../layouts/Base.astro';
   <p>Come le variazioni ormonali possono influenzare le gengive e perché conoscere il proprio corpo può aiutare a prendersene cura.</p>
   <span class="link-arrow">Leggi l'articolo ↗</span>
 </a>
+{articoli.map((articolo) => (
+  <a
+    href={`/approfondimenti/${articolo.id}/`}
+    style="display:block;max-width:680px;margin:30px 0 55px;"
+  >
+    {articolo.data.image && (
+      <img
+        src={articolo.data.image}
+        alt={articolo.data.title}
+        style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:24px;"
+        loading="lazy"
+      />
+    )}
+    <span class="eyebrow">{articolo.data.category}</span>
+    <h3 style="margin:15px 0;">{articolo.data.title}</h3>
+    <p>{articolo.data.description}</p>
+    <span class="link-arrow">Leggi l'articolo ↗</span>
+  </a>
+))}
 </div></Base>
