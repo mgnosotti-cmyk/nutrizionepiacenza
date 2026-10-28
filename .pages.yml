@@ -1,0 +1,32 @@
+
+media:
+  input: public/images
+  output: /images
+
+content:
+  - name: approfondimenti
+    label: Approfondimenti
+    type: collection
+    path: src/content/approfondimenti
+    view:
+      fields: [title, category, date]
+    fields:
+      - name: title
+        label: Titolo
+        type: string
+        required: true
+      - name: description
+        label: Descrizione breve
+        type: text
+      - name: category
+        label: Categoria
+        type: string
+      - name: date
+        label: Data
+        type: date
+      - name: image
+        label: Immagine
+        type: image
+      - name: body
+        label: Testo dell'articolo
+        type: rich-text
