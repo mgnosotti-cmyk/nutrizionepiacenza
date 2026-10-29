@@ -1,44 +1,37 @@
 
 ---
 import Base from '../layouts/Base.astro';
-import { getCollection } from 'astro:content';
-
-const ricette = (await getCollection('ricette'))
-  .sort((a, b) =>
-    (b.data.date?.getTime() ?? 0) -
-    (a.data.date?.getTime() ?? 0)
-  );
 
 const categorie = [
   {
     nome: 'Primi piatti',
     slug: 'primi-piatti',
-    immagine: '/images/primi-piatti.webp'
+    immagine: '/images/immagini-categorie-a-tavola/primi-piatti.webp'
   },
   {
     nome: 'Secondi piatti',
     slug: 'secondi-piatti',
-    immagine: '/images/secondi-piatti.webp'
+    immagine: '/images/immagini-categorie-a-tavola/secondi-piatti.webp'
   },
   {
     nome: 'Dolci',
     slug: 'dolci',
-    immagine: '/images/dolci.webp'
+    immagine: '/images/immagini-categorie-a-tavola/dolci.webp'
   },
   {
     nome: 'Bevande',
     slug: 'bevande',
-    immagine: '/images/bevande.webp'
+    immagine: '/images/immagini-categorie-a-tavola/bevande.webp'
   },
   {
     nome: 'Antipasti e contorni',
     slug: 'antipasti-e-contorni',
-    immagine: '/images/antipasti-e-contorni.webp'
+    immagine: '/images/immagini-categorie-a-tavola/antipasti-e-contorni.webp'
   },
   {
     nome: 'Colazioni e merende',
     slug: 'colazioni-e-merende',
-    immagine: '/images/colazioni-e-merende.webp'
+    immagine: '/images/immagini-categorie-a-tavola/colazioni-e-merende.webp'
   }
 ];
 ---
@@ -81,57 +74,14 @@ const categorie = [
               width="800"
               height="800"
             />
+
             <div class="categoria-overlay">
               <h3>{categoria.nome}</h3>
-              <span class="linea"></span>
+              <span class="linea" aria-hidden="true"></span>
             </div>
           </a>
         ))}
       </div>
-    </section>
-
-    <section class="sezione-ricette" aria-labelledby="titolo-ricette">
-      <div class="titolo-sezione">
-        <span class="eyebrow">Da scoprire</span>
-        <h2 id="titolo-ricette">Le ultime ricette</h2>
-        <p>Il piacere di cucinare incontra la curiosità di conoscere.</p>
-      </div>
-
-      {ricette.length === 0 ? (
-        <p>Nuove ricette in arrivo.</p>
-      ) : (
-        <div class="griglia-ricette">
-          {ricette.slice(0, 6).map(ricetta => (
-            <a
-              class="ricetta-card"
-              href={`/a-tavola/${ricetta.id}/`}
-            >
-              <div class="ricetta-immagine">
-                {ricetta.data.image && (
-                  <img
-                    src={ricetta.data.image}
-                    alt={ricetta.data.title}
-                    loading="lazy"
-                  />
-                )}
-              </div>
-
-              <div class="ricetta-testo">
-                {ricetta.data.category && (
-                  <span class="eyebrow">{ricetta.data.category}</span>
-                )}
-                <h3>{ricetta.data.title}</h3>
-                {ricetta.data.description && (
-                  <p>{ricetta.data.description}</p>
-                )}
-                <span class="link-ricetta">
-                  Scopri la ricetta <span aria-hidden="true">↗</span>
-                </span>
-              </div>
-            </a>
-          ))}
-        </div>
-      )}
     </section>
   </main>
 </Base>
@@ -245,67 +195,6 @@ const categorie = [
     width: 80px;
   }
 
-  .sezione-ricette {
-    margin-top: 110px;
-  }
-
-  .griglia-ricette {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 55px 32px;
-  }
-
-  .ricetta-card {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .ricetta-immagine {
-    aspect-ratio: 4 / 3;
-    background: #f0ece5;
-    overflow: hidden;
-  }
-
-  .ricetta-immagine img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform .6s ease;
-  }
-
-  .ricetta-card:hover img {
-    transform: scale(1.04);
-  }
-
-  .ricetta-testo {
-    padding-top: 24px;
-  }
-
-  .ricetta-testo h3 {
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: clamp(25px, 2.5vw, 34px);
-    font-weight: 400;
-    line-height: 1.2;
-    letter-spacing: -.025em;
-    margin: 12px 0;
-  }
-
-  .ricetta-testo p {
-    font-size: 15px;
-    line-height: 1.7;
-    opacity: .72;
-    margin: 0 0 18px;
-  }
-
-  .link-ricetta {
-    display: inline-block;
-    font-size: 13px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid currentColor;
-  }
-
   @media (max-width: 900px) {
     .griglia-categorie {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -339,20 +228,10 @@ const categorie = [
     .linea {
       width: 30px;
     }
-
-    .sezione-ricette {
-      margin-top: 75px;
-    }
-
-    .griglia-ricette {
-      grid-template-columns: 1fr;
-      gap: 42px;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .categoria-card img,
-    .ricetta-immagine img,
     .linea {
       transition: none;
     }
