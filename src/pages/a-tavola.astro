@@ -8,11 +8,24 @@ const ricette = (await getCollection('ricette'))
     (b.data.date?.getTime() ?? 0) -
     (a.data.date?.getTime() ?? 0)
   );
+
+const categorie = [
+  'Primi piatti',
+  'Secondi piatti',
+  'Dolci',
+  'Bevande',
+  'Antipasti e contorni',
+  'Colazioni e merende'
+];
+
+const categoriePresenti = categorie.filter(categoria =>
+  ricette.some(ricetta => ricetta.data.category === categoria)
+);
 ---
 
 <Base
   title="A tavola | Maria Giulia Nosotti"
-  description="Ricette e salute orale: un nuovo modo di raccontare l'alimentazione."
+  description="Ricette, alimentazione e salute orale: il gusto di sapere."
 >
   <section class="page-hero">
     <span class="eyebrow">A tavola</span>
@@ -20,41 +33,223 @@ const ricette = (await getCollection('ricette'))
     <p>Il piacere di mangiare, la curiosità di conoscere.</p>
   </section>
 
-  <div class="content">
+  <div class="content intro-ricette">
     <p>L'alimentazione è parte della nostra quotidianità: un insieme di sapori, abitudini, tradizioni e scelte che accompagnano ogni fase della vita.</p>
     <p>In questo spazio condivido ricette, idee e curiosità sugli alimenti, con uno sguardo alle loro caratteristiche nutrizionali e alle connessioni con la salute orale.</p>
     <p>Perché conoscere ciò che portiamo in tavola può aiutarci a fare scelte più consapevoli, senza rinunciare al piacere del cibo.</p>
+  </div>
 
-    <h2>Ricette da provare</h2>
+  <section class="ricettario">
+    <div class="ricettario-heading">
+      <span class="eyebrow">Il ricettario</span>
+      <h2>Ricette da provare</h2>
+    </div>
+
+    {ricette.length > 0 && (
+      <div class="filtri" aria-label="Filtra le ricette">
+        <button class="filtro attivo" data-filter="tutte" aria-pressed="true">Tutte</button>
+        {categoriePresenti.map(categoria => (
+          <button class="filtro" data-filter={categoria} aria-pressed="false">
+            {categoria}
+          </button>
+        ))}
+      </div>
+    )}
 
     {ricette.length === 0 && (
       <p>Nuove ricette in arrivo.</p>
     )}
 
-    {ricette.map((ricetta) => (
-      <a
-        href={`/a-tavola/${ricetta.id}/`}
-        style="display:block;max-width:680px;margin:30px 0 55px;"
-      >
-        {ricetta.data.image && (
-          <img
-            src={ricetta.data.image}
-            alt={ricetta.data.title}
-            style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:24px;"
-            loading="lazy"
-          />
-        )}
-        {ricetta.data.category && (
-          <span class="eyebrow">{ricetta.data.category}</span>
-        )}
-        <h3 style="margin:15px 0;">{ricetta.data.title}</h3>
-        {ricetta.data.description && (
-          <p>{ricetta.data.description}</p>
-        )}
-        <span class="link-arrow">Scopri la ricetta ↗</span>
-      </a>
-    ))}
-
-
-  </div>
+    <div class="griglia-ricette">
+      {ricette.map(ricetta => (
+        <a
+          class="scheda-ricetta"
+          href={`/a-tavola/${ricetta.id}/`}
+          data-category={ricetta.data.category || ''}
+        >
+          <div class="scheda-immagine">
+            {ricetta.data.image ? (
+              <img
+                src={ricetta.data.image}
+                alt={ricetta.data.title}
+                loading="lazy"
+              />
+            ) : (
+              <div class="immagine-assente"></div>
+            )}
+          </div>
+          <div class="scheda-contenuto">
+            {ricetta.data.category && (
+              <span class="eyebrow">{ricetta.data.category}</span>
+            )}
+            <h3>{ricetta.data.title}</h3>
+            {ricetta.data.description && (
+              <p>{ricetta.data.description}</p>
+            )}
+            <span class="scopri">Scopri la ricetta <span aria-hidden="true">↗</span></span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
 </Base>
+
+<script>
+  document.querySelectorAll('.filtro').forEach(pulsante => {
+    pulsante.addEventListener('click', () => {
+      const categoria = pulsante.getAttribute('data-filter');
+
+      document.querySelectorAll('.filtro').forEach(filtro => {
+        const attivo = filtro === pulsante;
+        filtro.classList.toggle('attivo', attivo);
+        filtro.setAttribute('aria-pressed', String(attivo));
+      });
+
+      document.querySelectorAll('.scheda-ricetta').forEach(scheda => {
+        scheda.hidden = categoria !== 'tutte' &&
+          scheda.getAttribute('data-category') !== categoria;
+      });
+    });
+  });
+</script>
+
+<style>
+  .intro-ricette {
+    margin-bottom: 70px;
+  }
+
+  .ricettario {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px 100px;
+  }
+
+  .ricettario-heading {
+    margin-bottom: 30px;
+  }
+
+  .ricettario-heading h2 {
+    margin: 12px 0 0;
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 400;
+    letter-spacing: -0.035em;
+  }
+
+  .filtri {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 38px;
+  }
+
+  .filtro {
+    appearance: none;
+    border: 1px solid #dedbd5;
+    background: transparent;
+    color: inherit;
+    border-radius: 30px;
+    padding: 11px 18px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .2s, color .2s, border-color .2s;
+  }
+
+  .filtro:hover,
+  .filtro.attivo {
+    background: #303a32;
+    color: #fff;
+    border-color: #303a32;
+  }
+
+  .griglia-ricette {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 48px 28px;
+  }
+
+  .scheda-ricetta {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .scheda-ricetta[hidden] {
+    display: none !important;
+  }
+
+  .scheda-immagine {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #f2f0eb;
+    border-radius: 3px;
+  }
+
+  .scheda-immagine img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .45s ease;
+  }
+
+  .scheda-ricetta:hover img {
+    transform: scale(1.035);
+  }
+
+  .immagine-assente {
+    width: 100%;
+    height: 100%;
+    background: #f2f0eb;
+  }
+
+  .scheda-contenuto {
+    padding-top: 22px;
+  }
+
+  .scheda-contenuto h3 {
+    font-size: clamp(21px, 2.2vw, 27px);
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    line-height: 1.25;
+    margin: 12px 0;
+  }
+
+  .scheda-contenuto p {
+    font-size: 15px;
+    line-height: 1.7;
+    opacity: .75;
+    margin: 0 0 18px;
+  }
+
+  .scopri {
+    display: inline-block;
+    font-size: 13px;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 5px;
+  }
+
+  @media (max-width: 680px) {
+    .intro-ricette {
+      margin-bottom: 48px;
+    }
+
+    .ricettario {
+      padding: 0 20px 70px;
+    }
+
+    .griglia-ricette {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .filtri {
+      gap: 8px;
+    }
+
+    .filtro {
+      padding: 9px 13px;
+      font-size: 12px;
+    }
+  }
+</style>
