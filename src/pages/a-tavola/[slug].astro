@@ -3,46 +3,326 @@
 import Base from '../../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
 
+const categorie = [
+  {
+    nome: 'Primi piatti',
+    slug: 'primi-piatti',
+    immagine: '/images/primi-piatti.webp'
+  },
+  {
+    nome: 'Secondi piatti',
+    slug: 'secondi-piatti',
+    immagine: '/images/secondi-piatti.webp'
+  },
+  {
+    nome: 'Dolci',
+    slug: 'dolci',
+    immagine: '/images/dolci.webp'
+  },
+  {
+    nome: 'Bevande',
+    slug: 'bevande',
+    immagine: '/images/bevande.webp'
+  },
+  {
+    nome: 'Antipasti e contorni',
+    slug: 'antipasti-e-contorni',
+    immagine: '/images/antipasti-e-contorni.webp'
+  },
+  {
+    nome: 'Colazioni e merende',
+    slug: 'colazioni-e-merende',
+    immagine: '/images/colazioni-e-merende.webp'
+  }
+];
+
 export async function getStaticPaths() {
   const ricette = await getCollection('ricette');
 
-  return ricette.map((ricetta) => ({
-    params: { slug: ricetta.id },
-    props: { ricetta },
+  const categoriePaths = categorie.map(categoria => ({
+    params: { slug: categoria.slug },
+    props: {
+      tipo: 'categoria',
+      categoria,
+      ricetteCategoria: ricette
+        .filter(ricetta =>
+          ricetta.data.category?.trim().toLowerCase() ===
+          categoria.nome.toLowerCase()
+        )
+        .sort((a, b) =>
+          (b.data.date?.getTime() ?? 0) -
+          (a.data.date?.getTime() ?? 0)
+        )
+    }
   }));
+
+  const ricettePaths = ricette
+    .filter(ricetta =>
+      !categorie.some(categoria => categoria.slug === ricetta.id)
+    )
+    .map(ricetta => ({
+      params: { slug: ricetta.id },
+      props: {
+        tipo: 'ricetta',
+        ricetta
+      }
+    }));
+
+  return [...categoriePaths, ...ricettePaths];
 }
 
-const { ricetta } = Astro.props;
-const { Content } = await render(ricetta);
+const { tipo, categoria, ricetteCategoria, ricetta } = Astro.props;
+
+let Content;
+
+if (tipo === 'ricetta') {
+  const risultato = await render(ricetta);
+  Content = risultato.Content;
+}
 ---
 
 <Base
-  title={`${ricetta.data.title} | Maria Giulia Nosotti`}
-  description={ricetta.data.description ?? ''}
+  title={
+    tipo === 'categoria'
+      ? `${categoria.nome} | A tavola | Maria Giulia Nosotti`
+      : `${ricetta.data.title} | Maria Giulia Nosotti`
+  }
+  description={
+    tipo === 'categoria'
+      ? `Scopri le ricette della categoria ${categoria.nome}.`
+      : ricetta.data.description ?? ''
+  }
 >
-  <section class="page-hero">
-    <span class="eyebrow">A tavola · {ricetta.data.category ?? 'Ricette'}</span>
-    <h1>{ricetta.data.title}</h1>
-    {ricetta.data.description && (
-      <p>{ricetta.data.description}</p>
-    )}
-  </section>
+  {tipo === 'categoria' ? (
+    <>
+      <section class="page-hero">
+        <span class="eyebrow">
+          <a href="/a-tavola/">A tavola</a> · Il ricettario
+        </span>
+        <h1>{categoria.nome}</h1>
+        <p>Idee, sapori e curiosità da portare in tavola.</p>
+      </section>
 
-  <article class="content">
-    {ricetta.data.image && (
-      <img
-        src={ricetta.data.image}
-        alt={ricetta.data.title}
-        style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:60px;"
-      />
-    )}
+      <main class="pagina-categoria">
+        <div class="copertina-categoria">
+          <img
+            src={categoria.immagine}
+            alt={`Fotografia della categoria ${categoria.nome}`}
+            width="1200"
+            height="600"
+          />
+        </div>
 
-    <Content />
+        <div class="intestazione-ricette">
+          <span class="eyebrow">Il gusto di sapere</span>
+          <h2>Le ricette</h2>
+        </div>
 
-    <p>
-      <a class="pill pill-outline" href="/a-tavola/">
-        Torna a tutte le ricette ↗
-      </a>
-    </p>
-  </article>
+        {ricetteCategoria.length === 0 ? (
+          <div class="nessuna-ricetta">
+            <p>Nuove ricette in arrivo.</p>
+            <a href="/a-tavola/">← Esplora le altre categorie</a>
+          </div>
+        ) : (
+          <div class="griglia-ricette">
+            {ricetteCategoria.map(item => (
+              <a
+                class="ricetta-card"
+                href={`/a-tavola/${item.id}/`}
+              >
+                <div class="ricetta-immagine">
+                  {item.data.image && (
+                    <img
+                      src={item.data.image}
+                      alt={item.data.title}
+                      loading="lazy"
+                    />
+                  )}
+                </div>
+                <div class="ricetta-contenuto">
+                  <span class="eyebrow">{item.data.category}</span>
+                  <h3>{item.data.title}</h3>
+                  {item.data.description && (
+                    <p>{item.data.description}</p>
+                  )}
+                  <span class="scopri">Scopri la ricetta ↗</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        <div class="ritorno">
+          <a class="pill pill-outline" href="/a-tavola/">
+            ← Torna a tutte le categorie
+          </a>
+        </div>
+      </main>
+    </>
+  ) : (
+    <>
+      <section class="page-hero">
+        <span class="eyebrow">
+          A tavola · {ricetta.data.category ?? 'Ricette'}
+        </span>
+        <h1>{ricetta.data.title}</h1>
+        {ricetta.data.description && (
+          <p>{ricetta.data.description}</p>
+        )}
+      </section>
+
+      <article class="content">
+        {ricetta.data.image && (
+          <img
+            src={ricetta.data.image}
+            alt={ricetta.data.title}
+            style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:60px;"
+          />
+        )}
+
+        {Content && <Content />}
+
+        <p>
+          <a class="pill pill-outline" href="/a-tavola/">
+            Torna a tutte le ricette ↗
+          </a>
+        </p>
+      </article>
+    </>
+  )}
 </Base>
+
+<style>
+  .page-hero a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .pagina-categoria {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 28px 100px;
+  }
+
+  .copertina-categoria {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    overflow: hidden;
+    margin-bottom: 75px;
+    background: #eee9e1;
+  }
+
+  .copertina-categoria img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .intestazione-ricette {
+    margin-bottom: 35px;
+  }
+
+  .intestazione-ricette h2 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 400;
+    letter-spacing: -.035em;
+    margin: 12px 0 0;
+  }
+
+  .griglia-ricette {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 48px 30px;
+  }
+
+  .ricetta-card {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+  }
+
+  .ricetta-immagine {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #f1eee9;
+  }
+
+  .ricetta-immagine img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform .5s ease;
+  }
+
+  .ricetta-card:hover img {
+    transform: scale(1.04);
+  }
+
+  .ricetta-contenuto {
+    padding-top: 22px;
+  }
+
+  .ricetta-contenuto h3 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(24px, 2.5vw, 32px);
+    font-weight: 400;
+    letter-spacing: -.025em;
+    line-height: 1.2;
+    margin: 12px 0;
+  }
+
+  .ricetta-contenuto p {
+    font-size: 15px;
+    line-height: 1.7;
+    opacity: .72;
+    margin-bottom: 18px;
+  }
+
+  .scopri {
+    display: inline-block;
+    font-size: 13px;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 5px;
+  }
+
+  .nessuna-ricetta {
+    padding: 45px 0 70px;
+  }
+
+  .nessuna-ricetta p {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 26px;
+  }
+
+  .nessuna-ricetta a {
+    color: inherit;
+    font-size: 14px;
+  }
+
+  .ritorno {
+    margin-top: 85px;
+  }
+
+  @media (max-width: 680px) {
+    .pagina-categoria {
+      padding: 0 18px 75px;
+    }
+
+    .copertina-categoria {
+      aspect-ratio: 4 / 3;
+      margin-bottom: 50px;
+    }
+
+    .griglia-ricette {
+      grid-template-columns: 1fr;
+      gap: 42px;
+    }
+
+    .ritorno {
+      margin-top: 60px;
+    }
+  }
+</style>
