@@ -36,8 +36,14 @@ const categorie = [
   }
 ];
 
-export async function getStaticPaths() {
-  const ricette = await getCollection('ricette');
+  const categorie = [
+    { nome: 'Primi piatti', slug: 'primi-piatti', immagine: '/images/primi-piatti.webp' },
+    { nome: 'Secondi piatti', slug: 'secondi-piatti', immagine: '/images/secondi-piatti.webp' },
+    { nome: 'Dolci', slug: 'dolci', immagine: '/images/dolci.webp' },
+    { nome: 'Bevande', slug: 'bevande', immagine: '/images/bevande.webp' },
+    { nome: 'Antipasti e contorni', slug: 'antipasti-e-contorni', immagine: '/images/antipasti-e-contorni.webp' },
+    { nome: 'Colazioni e merende', slug: 'colazioni-e-merende', immagine: '/images/colazioni-e-merende.webp' }
+  ];
 
   const categoriePaths = categorie.map(categoria => ({
     params: { slug: categoria.slug },
