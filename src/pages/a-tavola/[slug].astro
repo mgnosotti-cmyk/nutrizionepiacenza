@@ -3,46 +3,40 @@
 import Base from '../../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
 
-const categorie = [
-  {
-    nome: 'Primi piatti',
-    slug: 'primi-piatti',
-    immagine: '/images/primi-piatti.webp'
-  },
-  {
-    nome: 'Secondi piatti',
-    slug: 'secondi-piatti',
-    immagine: '/images/secondi-piatti.webp'
-  },
-  {
-    nome: 'Dolci',
-    slug: 'dolci',
-    immagine: '/images/dolci.webp'
-  },
-  {
-    nome: 'Bevande',
-    slug: 'bevande',
-    immagine: '/images/bevande.webp'
-  },
-  {
-    nome: 'Antipasti e contorni',
-    slug: 'antipasti-e-contorni',
-    immagine: '/images/antipasti-e-contorni.webp'
-  },
-  {
-    nome: 'Colazioni e merende',
-    slug: 'colazioni-e-merende',
-    immagine: '/images/colazioni-e-merende.webp'
-  }
-];
+export async function getStaticPaths() {
+  const ricette = await getCollection('ricette');
 
   const categorie = [
-    { nome: 'Primi piatti', slug: 'primi-piatti', immagine: '/images/primi-piatti.webp' },
-    { nome: 'Secondi piatti', slug: 'secondi-piatti', immagine: '/images/secondi-piatti.webp' },
-    { nome: 'Dolci', slug: 'dolci', immagine: '/images/dolci.webp' },
-    { nome: 'Bevande', slug: 'bevande', immagine: '/images/bevande.webp' },
-    { nome: 'Antipasti e contorni', slug: 'antipasti-e-contorni', immagine: '/images/antipasti-e-contorni.webp' },
-    { nome: 'Colazioni e merende', slug: 'colazioni-e-merende', immagine: '/images/colazioni-e-merende.webp' }
+    {
+      nome: 'Primi piatti',
+      slug: 'primi-piatti',
+      immagine: '/images/primi-piatti.webp'
+    },
+    {
+      nome: 'Secondi piatti',
+      slug: 'secondi-piatti',
+      immagine: '/images/secondi-piatti.webp'
+    },
+    {
+      nome: 'Dolci',
+      slug: 'dolci',
+      immagine: '/images/dolci.webp'
+    },
+    {
+      nome: 'Bevande',
+      slug: 'bevande',
+      immagine: '/images/bevande.webp'
+    },
+    {
+      nome: 'Antipasti e contorni',
+      slug: 'antipasti-e-contorni',
+      immagine: '/images/antipasti-e-contorni.webp'
+    },
+    {
+      nome: 'Colazioni e merende',
+      slug: 'colazioni-e-merende',
+      immagine: '/images/colazioni-e-merende.webp'
+    }
   ];
 
   const categoriePaths = categorie.map(categoria => ({
@@ -127,7 +121,9 @@ if (tipo === 'ricetta') {
         {ricetteCategoria.length === 0 ? (
           <div class="nessuna-ricetta">
             <p>Nuove ricette in arrivo.</p>
-            <a href="/a-tavola/">← Esplora le altre categorie</a>
+            <a href="/a-tavola/">
+              ← Esplora le altre categorie
+            </a>
           </div>
         ) : (
           <div class="griglia-ricette">
@@ -145,13 +141,21 @@ if (tipo === 'ricetta') {
                     />
                   )}
                 </div>
+
                 <div class="ricetta-contenuto">
-                  <span class="eyebrow">{item.data.category}</span>
+                  <span class="eyebrow">
+                    {item.data.category}
+                  </span>
+
                   <h3>{item.data.title}</h3>
+
                   {item.data.description && (
                     <p>{item.data.description}</p>
                   )}
-                  <span class="scopri">Scopri la ricetta ↗</span>
+
+                  <span class="scopri">
+                    Scopri la ricetta ↗
+                  </span>
                 </div>
               </a>
             ))}
@@ -159,7 +163,10 @@ if (tipo === 'ricetta') {
         )}
 
         <div class="ritorno">
-          <a class="pill pill-outline" href="/a-tavola/">
+          <a
+            class="pill pill-outline"
+            href="/a-tavola/"
+          >
             ← Torna a tutte le categorie
           </a>
         </div>
@@ -171,7 +178,9 @@ if (tipo === 'ricetta') {
         <span class="eyebrow">
           A tavola · {ricetta.data.category ?? 'Ricette'}
         </span>
+
         <h1>{ricetta.data.title}</h1>
+
         {ricetta.data.description && (
           <p>{ricetta.data.description}</p>
         )}
@@ -189,7 +198,10 @@ if (tipo === 'ricetta') {
         {Content && <Content />}
 
         <p>
-          <a class="pill pill-outline" href="/a-tavola/">
+          <a
+            class="pill pill-outline"
+            href="/a-tavola/"
+          >
             Torna a tutte le ricette ↗
           </a>
         </p>
@@ -219,9 +231,9 @@ if (tipo === 'ricetta') {
   }
 
   .copertina-categoria img {
+    display: block;
     width: 100%;
     height: 100%;
-    display: block;
     object-fit: cover;
   }
 
@@ -244,9 +256,9 @@ if (tipo === 'ricetta') {
   }
 
   .ricetta-card {
+    display: block;
     color: inherit;
     text-decoration: none;
-    display: block;
   }
 
   .ricetta-immagine {
@@ -256,9 +268,9 @@ if (tipo === 'ricetta') {
   }
 
   .ricetta-immagine img {
+    display: block;
     width: 100%;
     height: 100%;
-    display: block;
     object-fit: cover;
     transition: transform .5s ease;
   }
@@ -329,6 +341,12 @@ if (tipo === 'ricetta') {
 
     .ritorno {
       margin-top: 60px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ricetta-immagine img {
+      transition: none;
     }
   }
 </style>
