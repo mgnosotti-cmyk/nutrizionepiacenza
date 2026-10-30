@@ -3,7 +3,7 @@ title: "Crema di legumi al rosmarino"
 description: "Una crema morbida di ceci, profumata al rosmarino, da accompagnare con verdure fresche."
 category: "Antipasti e contorni"
 date: 2026-10-29
-image: "/images/ricette/crema-legumi-rosmarino.webp"
+image: "/images/crema-legumi-rosmarino.webp"
 ---
 
 ## Ingredienti per 4 porzioni da antipasto
