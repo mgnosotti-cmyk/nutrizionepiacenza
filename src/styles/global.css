@@ -34,3 +34,26 @@
 .collaboration-item{max-width:390px}
 .collaboration-item img{width:100%;height:auto;aspect-ratio:1631/958;object-fit:contain}
 .collaboration-item p{font-size:.88rem;color:var(--muted);margin:14px 0 0}
+
+/* Revisione ritmo verticale — 31 ottobre 2026.
+   Mantiene colori, tipografia e struttura; riduce gli spazi eccessivi. */
+@media (min-width: 681px) {
+  .section { padding-top: clamp(60px, 6vw, 96px); padding-bottom: clamp(60px, 6vw, 96px); }
+  .page-hero { padding-top: clamp(68px, 7vw, 108px); padding-bottom: clamp(68px, 7vw, 108px); }
+  .content { padding-top: 64px; padding-bottom: 84px; }
+  .content h2 { margin-top: 46px; margin-bottom: 22px; }
+  .section-head { margin-bottom: 30px; }
+  .banner { min-height: 320px; padding-top: 58px; padding-bottom: 58px; }
+  .about-text { padding-top: clamp(40px, 4.5vw, 72px); padding-bottom: clamp(40px, 4.5vw, 72px); }
+  .collaborations { margin-top: 58px; margin-bottom: 40px; padding-top: 30px; }
+}
+@media (max-width: 680px) {
+  .section { padding-top: 54px; padding-bottom: 54px; }
+  .page-hero { padding-top: 60px; padding-bottom: 60px; }
+  .content { padding-top: 48px; padding-bottom: 68px; }
+  .content h2 { margin-top: 38px; margin-bottom: 20px; }
+  .section-head { margin-bottom: 26px; }
+  .banner { min-height: 0; padding-top: 58px; padding-bottom: 58px; }
+  .about-text { padding-top: 48px; padding-bottom: 48px; }
+  .collaborations { margin-top: 48px; margin-bottom: 32px; padding-top: 26px; }
+}
