@@ -3,7 +3,7 @@ title: Bicchierini di yogurt greco, mirtilli e crumble di noci
 description: Una crema fresca di yogurt greco con mirtilli e crumble croccante
   di noci e avena. Una ricetta semplice per scoprire perché non tutti gli
   alimenti acidi hanno lo stesso effetto sullo smalto dentale.
-category: Colazioni e dolci
+category: "Colazioni"
 date: 2026-10-28
 image: /images/Parfait ai mirtilli con granola e noci.png
 ---
