@@ -1,7 +1,7 @@
 ---
 title: "Pancake di avena e yogurt"
 description: "Pancake soffici per una colazione semplice, con yogurt naturale e frutta a piacere."
-category: "Colazioni e dolci"
+category: "Colazioni"
 date: 2026-10-29
 image: "/images/ricette/pancake-avena-yogurt.webp"
 ---
