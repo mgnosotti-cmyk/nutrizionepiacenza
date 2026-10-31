@@ -1,7 +1,7 @@
 ---
 title: "Biscotti d’avena, noci e cioccolato fondente"
 description: "Biscotti rustici con fiocchi d’avena, noci e pezzetti di fondente."
-category: "Colazioni e dolci"
+category: "Dolci"
 date: 2026-10-29
 image: "/images/ricette/biscotti-avena-noci-fondente.webp"
 ---
